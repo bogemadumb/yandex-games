@@ -1,0 +1,79 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../game5-flux/style.css">
+<style>html,body{margin:0;background:#080b1e;overflow:hidden}canvas{display:block}</style></head><body>
+<canvas id="c"></canvas>
+<script src="../game5-flux/sim.js"></script><script src="../game5-flux/draw.js"></script><script src="../game5-flux/fx.js"></script><script src="../game5-flux/scene.js"></script>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search), mode = q.get('mode') || 'cover';
+  var SZ = { icon: [512, 512], cover: [800, 470], snippet: [1120, 630], vkicon: [576, 576] }[mode] || [800, 470];
+  var cw = SZ[0], ch = SZ[1], cv = document.getElementById('c'); cv.width = cw; cv.height = ch;
+  var cx = cv.getContext('2d'), D = window.Draw, TAU = 6.2832;
+  var rs = Sim.mulberry(11); Math.random = function () { return rs(); };
+  document.fonts.load('700 40px Unbounded', 'FLUX').then(function () { draw(); document.title = 'ready'; window.READY = true; });
+  function draw() {
+    var icon = mode === 'icon' || mode === 'vkicon';
+    Scene.bgGrad(cx, cw, ch, icon ? 1 : 2);
+    // dots
+    cx.fillStyle = '#fff'; for (var i = 0; i < 70; i++) { cx.globalAlpha = 0.08 + rs() * 0.25; cx.beginPath(); cx.arc(rs() * cw, rs() * ch, 0.6 + rs() * 1.4, 0, TAU); cx.fill(); } cx.globalAlpha = 1;
+    // work in a 900x1200-ish logical scene mapped onto canvas
+    var S = Math.max(cw / 900, ch / 600) * (icon ? 1.0 : 1), ox, oy;
+    // charges layout in canvas px
+    var A1, R1, A2, em, goal, stars;
+    if (icon) { A1 = { t: 'a', x: cw * 0.5, y: ch * 0.52, k: 1.5 }; R1 = { t: 'r', x: cw * 0.86, y: ch * 0.2, k: 1 }; A2 = null; em = [cw * 0.12, ch * 0.86]; }
+    else { A1 = { t: 'a', x: cw * 0.43, y: ch * 0.68, k: 1.3 }; R1 = { t: 'r', x: cw * 0.8, y: ch * 0.66, k: 1.1 }; A2 = { t: 'a', x: cw * 0.22, y: ch * 0.5, k: 0.7 }; em = [cw * 0.06, ch * 0.9]; }
+    var ch_ = [A1, R1].concat(A2 ? [A2] : []);
+    // path via simple integration
+    var px = em[0], py = em[1], vx = icon ? 120 : 190, vy = icon ? -170 : -150, path = [[px, py]], k = icon ? 0.7 : 0.9;
+    for (var s = 0; s < 4000; s++) {
+      var ax = 0, ay = 0;
+      ch_.forEach(function (c) { var dx = c.x - px, dy = c.y - py, r2 = dx * dx + dy * dy, f = (c.t === 'a' ? 1 : -1) * 30000 * k * c.k / (r2 + 1800); ax += f * dx; ay += f * dy; });
+      vx += ax / 120; vy += ay / 120; px += vx / 120; py += vy / 120;
+      if (s % 2 === 0) path.push([px, py]);
+      if (px < -40 || px > cw + 40 || py < (icon ? -40 : ch * 0.34) || py > ch + 40) break;
+    }
+    // flow dust
+    var W = 900, H = 1200; FX.dustInit(0);
+    cx.save(); cx.lineCap = 'round'; cx.globalCompositeOperation = 'lighter'; cx.lineWidth = 2;
+    for (var n = 0; n < (icon ? 90 : 190); n++) {
+      var x = rs() * cw, y = rs() * ch, len = 0; cx.beginPath(); cx.moveTo(x, y);
+      var inf = 0;
+      for (var st = 0; st < 22; st++) {
+        var fx_ = 0, fy_ = 0; inf = 0;
+        ch_.forEach(function (c) { var dx = c.x - x, dy = c.y - y, r2 = dx * dx + dy * dy, f = (c.t === 'a' ? 1 : -1) * 30000 * c.k / (r2 + 1800); fx_ += f * dx; fy_ += f * dy; inf += (c.t === 'a' ? 1 : -1) * c.k / (1 + r2 / 40000); });
+        var m = Math.sqrt(fx_ * fx_ + fy_ * fy_) || 1; x += fx_ / m * 5; y += fy_ / m * 5; cx.lineTo(x, y);
+      }
+      var col = inf > 0.12 ? '70,235,215' : inf < -0.12 ? '255,100,130' : '150,170,230';
+      cx.strokeStyle = 'rgba(' + col + ',' + (0.12 + rs() * 0.22) + ')'; cx.stroke();
+    }
+    cx.restore();
+    // charges
+    var sc = icon ? 1.9 : 1.55;
+    ch_.forEach(function (c) { Scene.charge(cx, c.t, c.x, c.y, 0.8 + (c.t === 'a' ? 0 : 0.33), { k: c.k, scale: sc, noHalo: true }); });
+    // stars along path
+    var pick = [0.3, 0.52, 0.76];
+    pick.forEach(function (f, i) { var p = path[Math.floor(path.length * f)]; if (p && !(icon && i === 0)) Scene.starIcon(cx, p[0], p[1], 0.3 * i, { scale: icon ? 1.8 : 1.4, lit: true }); });
+    // trail + head
+    var end = path[path.length - 1], pts = [], N = Math.min(path.length, 110);
+    for (var j = 0; j < N; j++) { var pp = path[path.length - N + j]; pts.push({ x: pp[0], y: pp[1], a: (N - 1 - j) * 0.011 }); }
+    cx.save();
+    // dotted preview of whole path in faint white
+    cx.setLineDash([1, 14]); cx.lineCap = 'round'; cx.strokeStyle = 'rgba(255,255,255,0.35)'; cx.lineWidth = 4; cx.beginPath(); path.forEach(function (p, i) { if (i === 0) cx.moveTo(p[0], p[1]); else cx.lineTo(p[0], p[1]); }); cx.stroke(); cx.restore();
+    // draw trail over the final 60% of path as bright trail
+    var seg = Math.floor(path.length * 0.3), tp = [];
+    var hi = Math.floor(path.length * (icon ? 0.62 : 0.58)), head = path[hi];
+    for (var u = hi - 60; u <= hi; u++) { if (u < 0) continue; tp.push({ x: path[u][0], y: path[u][1], a: (hi - u) * 0.018 }); }
+    FX.trail(cx, tp, 0, 0); FX.head(cx, head[0], head[1], 0, 0, icon ? 2.0 : 1.7);
+    // goal
+    if (!icon) { var g = path[path.length - 1]; Scene.goal(cx, { x: g[0], y: g[1], r: 36 }, 0.5, 0); Scene.emitter(cx, { x: em[0] + 30, y: em[1] - 30, vx: 100, vy: -140 }, 0.4); }
+    
+    // title
+    if (mode === 'cover' || mode === 'snippet') {
+      cx.save(); cx.shadowColor = 'rgba(100,160,255,0.95)'; cx.shadowBlur = 34;
+      var lg = cx.createLinearGradient(0, ch * 0.1, 0, ch * 0.3); lg.addColorStop(0, '#ffffff'); lg.addColorStop(1, '#8fd8ff');
+      D.txt(cx, 'FLUX', cw * 0.5, ch * 0.16, ch * 0.2, lg, 'center', 'Unbounded'); cx.restore();
+    }
+    // vignette
+    var vg = cx.createRadialGradient(cw / 2, ch / 2, Math.min(cw, ch) * 0.35, cw / 2, ch / 2, Math.max(cw, ch) * 0.75); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,10,0.55)'); cx.fillStyle = vg; cx.fillRect(0, 0, cw, ch);
+  }
+})();
+</script></body></html>

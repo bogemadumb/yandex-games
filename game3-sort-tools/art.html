@@ -1,0 +1,74 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0}
+body{font-family:"Trebuchet MS","Segoe UI",Arial,sans-serif;font-weight:800;overflow:hidden}
+#icon{width:512px;height:512px;position:relative;background:radial-gradient(circle at 15% 10%,#fff6d6 0,rgba(255,246,214,0) 45%),linear-gradient(160deg,#6aa8ff 0%,#8d7bff 55%,#d36bff 100%)}
+#cover{width:800px;height:470px;position:relative;background:radial-gradient(circle at 12% 8%,#fff6d6 0,rgba(255,246,214,0) 38%),radial-gradient(circle at 92% 90%,#ffe0f0 0,rgba(255,224,240,0) 42%),linear-gradient(180deg,#e4f2ff 0%,#eef0ff 55%,#f7eaff 100%)}
+canvas{position:absolute;left:0;top:0}
+.t1{position:absolute;left:36px;top:46px;font-size:100px;line-height:.9;color:#2b4fb8;-webkit-text-stroke:10px #fff;paint-order:stroke fill;text-shadow:0 6px 0 #c3d6fb;letter-spacing:1px}
+.t2{position:absolute;left:36px;top:150px;font-size:100px;line-height:.9;color:#ff5a3d;-webkit-text-stroke:10px #fff;paint-order:stroke fill;text-shadow:0 6px 0 #c3d6fb}
+.pill{position:absolute;left:40px;top:278px;padding:8px 26px;border-radius:30px;background:linear-gradient(180deg,#ffb347,#ff7a1f);color:#fff;font-size:30px;box-shadow:0 5px 0 #b8501c;text-shadow:0 2px 0 rgba(0,0,0,.25)}
+.sub{position:absolute;left:44px;top:352px;font-size:27px;color:#23386e}
+</style></head><body>
+<div id="icon" style="display:none"><canvas id="ci" width="512" height="512"></canvas></div>
+<div id="cover" style="display:none"><canvas id="cc" width="800" height="470"></canvas><div class="t1">BALL</div><div class="t2">SORT</div><div class="pill">300+ LEVELS</div><div class="sub">Color tubes puzzle</div></div>
+<script>
+var TAU=Math.PI*2, BASE=['#ff4d5e', '#ff9a2e', '#ffd93d', '#9be04a', '#1fb86a', '#22d3d3', '#3d8bff', '#7a4dff', '#e05cff', '#ff8fc0', '#a8703a', '#5b6785'];
+function mixHex(h,to,a){var n=parseInt(h.slice(1),16),r=n>>16,g=(n>>8)&255,b=n&255,m=parseInt(to.slice(1),16),r2=m>>16,g2=(m>>8)&255,b2=m&255;return 'rgb('+Math.round(r+(r2-r)*a)+','+Math.round(g+(g2-g)*a)+','+Math.round(b+(b2-b)*a)+')';}
+var PAL=BASE.map(function(b){return {b:b,l:mixHex(b,'#ffffff',0.55),d:mixHex(b,'#1a1f5a',0.38)};});
+  function symbol(k, x, y, s, id) {
+    k.save(); k.lineJoin = 'round'; k.lineCap = 'round';
+    k.fillStyle = '#fff'; k.strokeStyle = 'rgba(15,25,70,.75)'; k.lineWidth = Math.max(1.5, s * 0.34);
+    var i, a;
+    function fs() { k.stroke(); k.fillStyle = '#fff'; k.fill(); }
+    k.beginPath();
+    switch (id % 12) {
+      case 0: k.arc(x, y, s * 0.55, 0, TAU); fs(); break;
+      case 1: k.arc(x, y, s * 0.62, 0, TAU); k.lineWidth = s * 0.75; k.strokeStyle = 'rgba(15,25,70,.75)'; k.stroke(); k.lineWidth = s * 0.34; k.strokeStyle = '#fff'; k.stroke(); break;
+      case 2: k.rect(x - s * 0.6, y - s * 0.6, s * 1.2, s * 1.2); fs(); break;
+      case 3: k.moveTo(x, y - s * 0.82); k.lineTo(x + s * 0.72, y); k.lineTo(x, y + s * 0.82); k.lineTo(x - s * 0.72, y); k.closePath(); fs(); break;
+      case 4: k.moveTo(x, y - s * 0.78); k.lineTo(x + s * 0.8, y + s * 0.62); k.lineTo(x - s * 0.8, y + s * 0.62); k.closePath(); fs(); break;
+      case 5: k.moveTo(x, y + s * 0.78); k.lineTo(x + s * 0.8, y - s * 0.62); k.lineTo(x - s * 0.8, y - s * 0.62); k.closePath(); fs(); break;
+      case 6:
+        for (i = 0; i < 10; i++) { a = -Math.PI / 2 + i * Math.PI / 5; var rr = i % 2 ? s * 0.4 : s * 0.9; if (i) k.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); else k.moveTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
+        k.closePath(); fs(); break;
+      case 7: k.moveTo(x - s * 0.8, y); k.lineTo(x + s * 0.8, y); k.moveTo(x, y - s * 0.8); k.lineTo(x, y + s * 0.8); k.lineWidth = s * 0.9; k.strokeStyle = 'rgba(15,25,70,.75)'; k.stroke(); k.lineWidth = s * 0.45; k.strokeStyle = '#fff'; k.stroke(); break;
+      case 8: k.moveTo(x - s * 0.6, y - s * 0.6); k.lineTo(x + s * 0.6, y + s * 0.6); k.moveTo(x + s * 0.6, y - s * 0.6); k.lineTo(x - s * 0.6, y + s * 0.6); k.lineWidth = s * 0.9; k.strokeStyle = 'rgba(15,25,70,.75)'; k.stroke(); k.lineWidth = s * 0.45; k.strokeStyle = '#fff'; k.stroke(); break;
+      case 9:
+        k.moveTo(x, y + s * 0.8); k.bezierCurveTo(x - s * 1.3, y - s * 0.1, x - s * 0.5, y - s * 0.95, x, y - s * 0.3); k.bezierCurveTo(x + s * 0.5, y - s * 0.95, x + s * 1.3, y - s * 0.1, x, y + s * 0.8); k.closePath(); fs(); break;
+      case 10: k.moveTo(x - s * 0.8, y - s * 0.35); k.lineTo(x + s * 0.8, y - s * 0.35); k.moveTo(x - s * 0.8, y + s * 0.35); k.lineTo(x + s * 0.8, y + s * 0.35); k.lineWidth = s * 0.9; k.strokeStyle = 'rgba(15,25,70,.75)'; k.stroke(); k.lineWidth = s * 0.4; k.strokeStyle = '#fff'; k.stroke(); break;
+      default: k.moveTo(x - s * 0.35, y - s * 0.8); k.lineTo(x - s * 0.35, y + s * 0.8); k.moveTo(x + s * 0.35, y - s * 0.8); k.lineTo(x + s * 0.35, y + s * 0.8); k.lineWidth = s * 0.9; k.strokeStyle = 'rgba(15,25,70,.75)'; k.stroke(); k.lineWidth = s * 0.4; k.strokeStyle = '#fff'; k.stroke();
+    }
+    k.restore();
+  }
+  function drawBallOn(k, x, y, r, ci, pat) {
+    var pal = PAL[ci];
+    var g = k.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.08, x, y, r);
+    g.addColorStop(0, pal.l); g.addColorStop(0.5, pal.b); g.addColorStop(1, pal.d);
+    k.fillStyle = g; k.beginPath(); k.arc(x, y, r, 0, TAU); k.fill();
+    k.lineWidth = Math.max(1, r * 0.07); k.strokeStyle = pal.d; k.stroke();
+    k.fillStyle = 'rgba(255,255,255,.18)'; k.beginPath(); k.ellipse(x + r * 0.15, y + r * 0.58, r * 0.4, r * 0.14, 0, 0, TAU); k.fill();
+    if (pat) symbol(k, x, y + r * 0.04, r * 0.4, ci);
+    k.fillStyle = 'rgba(255,255,255,.8)'; k.beginPath(); k.ellipse(x - r * 0.36, y - r * 0.45, r * 0.24, r * 0.14, -0.6, 0, TAU); k.fill();
+  }
+
+function tube(k,x,yb,w,h,fill){var r=w/2;k.beginPath();k.moveTo(x-w/2,yb-h);k.lineTo(x+w/2,yb-h);k.lineTo(x+w/2,yb-r);k.arc(x,yb-r,r,0,Math.PI);k.closePath();k.fillStyle=fill||'rgba(255,255,255,.62)';k.fill();k.lineWidth=Math.max(3,w*0.05);k.strokeStyle='#b3c7ee';k.stroke();
+ k.strokeStyle='rgba(255,255,255,.95)';k.lineCap='round';k.lineWidth=w*0.06;k.beginPath();k.moveTo(x-w*0.3,yb-h+w*0.2);k.lineTo(x-w*0.3,yb-w*0.7);k.stroke();
+ k.beginPath();k.roundRect?k.roundRect(x-w*0.58,yb-h-w*0.12,w*1.16,w*0.2,w*0.1):k.rect(x-w*0.58,yb-h-w*0.12,w*1.16,w*0.2);k.fillStyle='rgba(255,255,255,.92)';k.fill();k.lineWidth=Math.max(2,w*0.04);k.strokeStyle='#b3c7ee';k.stroke();}
+function ballsIn(k,x,yb,w,cols){var r=w*0.5*0.78, pad=w*0.11; for(var j=0;j<cols.length;j++){ if(cols[j]<0) continue; drawBallOn(k,x,yb-pad-r-j*r*2.04,r,cols[j],false);} }
+function scene(k,cx0,yb,w,h,gap,tubes,lifted,pat){
+  var n=tubes.length;
+  for(var i=0;i<n;i++){var x=cx0+i*(w+gap); k.fillStyle='rgba(60,80,170,.15)';k.beginPath();k.ellipse(x,yb+4,w*0.62,w*0.1,0,0,TAU);k.fill(); tube(k,x,yb,w,h); ballsIn(k,x,yb,w,tubes[i]);}
+  if(lifted){var x=cx0+lifted.t*(w+gap),r=w*0.5*0.78; drawBallOn(k,x,yb-h-r*1.2,r,lifted.c,false);}
+}
+var q=new URLSearchParams(location.search), mode=q.get('m');
+if(mode==='icon'){document.getElementById('icon').style.display='block';var k=document.getElementById('ci').getContext('2d');
+ var g=k.createRadialGradient(256,120,20,256,256,360);g.addColorStop(0,'rgba(255,255,255,.28)');g.addColorStop(1,'rgba(255,255,255,0)');k.fillStyle=g;k.fillRect(0,0,512,512);
+ scene(k,100,452,128,330,26,[[0,6,0,0],[6,2,6],[2,0,2,2]],{t:1,c:3});
+ k.fillStyle='rgba(255,255,255,.9)';
+ [[70,70,10],[440,96,7],[420,400,8]].forEach(function(s){k.beginPath();k.moveTo(s[0],s[1]-s[2]*2);k.quadraticCurveTo(s[0],s[1],s[0]+s[2]*2,s[1]);k.quadraticCurveTo(s[0],s[1],s[0],s[1]+s[2]*2);k.quadraticCurveTo(s[0],s[1],s[0]-s[2]*2,s[1]);k.quadraticCurveTo(s[0],s[1],s[0],s[1]-s[2]*2);k.fill();});
+} else {document.getElementById('cover').style.display='block';var k=document.getElementById('cc').getContext('2d');
+ var sc=k; sc.save();
+ scene(k,468,438,72,290,16,[[0,6,0,4],[6,3,6,3],[3,0,3,0],[4,4,6,0],[-1],[-1]].map(function(a){return a.filter(function(v){return v>=0})}),{t:2,c:2});
+ k.fillStyle='#fff';[[430,40,9],[760,70,7],[40,420,10]].forEach(function(s){k.fillStyle='#ffc83a';k.beginPath();k.moveTo(s[0],s[1]-s[2]*2);k.quadraticCurveTo(s[0],s[1],s[0]+s[2]*2,s[1]);k.quadraticCurveTo(s[0],s[1],s[0],s[1]+s[2]*2);k.quadraticCurveTo(s[0],s[1],s[0]-s[2]*2,s[1]);k.quadraticCurveTo(s[0],s[1],s[0],s[1]-s[2]*2);k.fill();});
+}
+</script></body></html>

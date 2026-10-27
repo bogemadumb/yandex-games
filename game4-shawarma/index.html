@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Shawarma Tycoon</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#59c7ff">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="i-coin" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="#ffb300" stroke="#c77700" stroke-width="2"/><circle cx="16" cy="16" r="10" fill="#ffd54a" stroke="#e69500" stroke-width="1.5"/><path d="M16 9l2.2 4.6 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5-3.6-3.5 5-.7z" fill="#fff3b0" stroke="#e69500" stroke-width=".8" stroke-linejoin="round"/></symbol>
+<symbol id="i-gift" viewBox="0 0 32 32"><rect x="4" y="12" width="24" height="16" rx="3" fill="#ff5c8a" stroke="#b32355" stroke-width="2"/><rect x="2.5" y="8" width="27" height="6" rx="2.5" fill="#ff8fb3" stroke="#b32355" stroke-width="2"/><rect x="14" y="8" width="4" height="20" fill="#ffe27a"/><path d="M16 8c-3-6-9-4-7 0zM16 8c3-6 9-4 7 0z" fill="#ffe27a" stroke="#c78a00" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+<symbol id="i-snd" viewBox="0 0 32 32"><path d="M5 12h5l7-6v20l-7-6H5z" fill="#fff"/><path d="M21 11c2.6 2.6 2.6 7.4 0 10M24.5 7.5c4.6 4.6 4.6 12.4 0 17" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></symbol>
+<symbol id="i-mute" viewBox="0 0 32 32"><path d="M5 12h5l7-6v20l-7-6H5z" fill="#fff"/><path d="M21 12l8 8M29 12l-8 8" stroke="#ffd0d8" stroke-width="3" stroke-linecap="round"/></symbol>
+<symbol id="i-play" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="#fff" fill-opacity=".95"/><path d="M13 9.5l10 6.5-10 6.5z" fill="#f5487f" stroke="#f5487f" stroke-width="2" stroke-linejoin="round"/></symbol>
+<symbol id="i-x" viewBox="0 0 32 32"><path d="M8 8l16 16M24 8L8 24" stroke="#fff" stroke-width="4" stroke-linecap="round"/></symbol>
+<symbol id="i-star" viewBox="0 0 32 32"><path d="M16 2.5l4.1 8.6 9.4 1.2-6.9 6.5 1.8 9.3L16 23.4l-8.4 4.7 1.8-9.3L2.5 12.3l9.4-1.2z" fill="#ffd34d" stroke="#c77700" stroke-width="2" stroke-linejoin="round"/></symbol>
+<symbol id="i-tap" viewBox="0 0 32 32"><path d="M12 14V6a2.2 2.2 0 0 1 4.4 0v7l7.6 2.4c1.6.5 2.3 1.6 2 3.2l-1.4 8c-.3 1.4-1.4 2.4-2.9 2.4h-8.4c-1.1 0-2-.5-2.6-1.4L5.4 20c-.8-1.3-.2-2.8 1.2-3.2 1.1-.3 2 .1 2.8 1l2.6 3z" fill="#fff" stroke="#c0630f" stroke-width="2" stroke-linejoin="round"/></symbol>
+<symbol id="i-hat" viewBox="0 0 32 32"><path d="M9 15a5.5 5.5 0 0 1 1-10.7A6.2 6.2 0 0 1 16 2a6.2 6.2 0 0 1 6 2.3A5.5 5.5 0 0 1 23 15v9H9z" fill="#fff" stroke="#7a8ab8" stroke-width="2" stroke-linejoin="round"/><rect x="9" y="19" width="14" height="7" rx="1.5" fill="#ffd9d9" stroke="#e8453c" stroke-width="2"/></symbol>
+<symbol id="i-moon" viewBox="0 0 32 32"><path d="M22 3a13 13 0 1 0 7 20A11 11 0 0 1 22 3z" fill="#ffe27a" stroke="#c78a00" stroke-width="2" stroke-linejoin="round"/><circle cx="23" cy="10" r="1.3" fill="#fff"/><circle cx="27" cy="15" r="1" fill="#fff"/></symbol>
+<symbol id="i-mult" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="#3ddc84" stroke="#14803f" stroke-width="2"/><path d="M10 10l12 12M22 10L10 22" stroke="#fff" stroke-width="4" stroke-linecap="round"/></symbol>
+<symbol id="i-flame" viewBox="0 0 32 32"><path d="M16 2c1 6 8 9 8 17a8 8 0 0 1-16 0c0-4 2-6 3-8 1 3 2 4 3 4 0-5-1-9 2-13z" fill="#ff8a1f" stroke="#c0390f" stroke-width="2" stroke-linejoin="round"/><path d="M16 14c.5 3 4 5 4 9a4 4 0 0 1-8 0c0-2 1-3 2-4 0 1 1 2 1.5 2 .4-2-.5-4.5.5-7z" fill="#ffd34d"/></symbol>
+<symbol id="i-lock" viewBox="0 0 32 32"><rect x="6" y="14" width="20" height="14" rx="3" fill="#cfd6ea" stroke="#6a7894" stroke-width="2"/><path d="M10 14v-4a6 6 0 0 1 12 0v4" fill="none" stroke="#6a7894" stroke-width="3"/></symbol>
+</defs>
+</svg>
+
+<canvas id="c"></canvas>
+
+<div id="hud"><div id="hudin">
+  <div class="col">
+    <div class="pill" id="coinpill"><svg class="ico"><use href="#i-coin"/></svg><span id="cash">0</span></div>
+    <div id="cps">+0/s</div>
+  </div>
+  <div class="sp"></div>
+  <div id="starbadge" class="hidden"><svg class="ico"><use href="#i-star"/></svg><span id="stars">0</span><small id="starm"></small></div>
+  <button class="rbtn" id="bgift" aria-label="daily"><svg class="ico"><use href="#i-gift"/></svg><i class="dot"></i></button>
+  <button class="rbtn" id="bsnd" aria-label="sound"><svg class="ico"><use href="#i-snd"/></svg></button>
+</div></div>
+
+<div id="panel">
+  <div class="floaters" id="floaters">
+    <button class="btn pink fl" id="bboost"><svg class="ico"><use href="#i-play"/></svg><span class="tx"><span id="tboost"></span><small id="tboost2"></small></span></button>
+    <div id="heat"><svg class="ico"><use href="#i-flame"/></svg><div class="bar"><i id="heati"></i></div></div>
+    <button class="btn orange fl" id="bcash"><svg class="ico"><use href="#i-play"/></svg><span class="tx"><span id="tcash"></span><small id="tcash2"></small></span></button>
+  </div>
+  <div id="tabs">
+    <button class="tab on" data-t="stands"><svg class="ico"><use href="#i-hat"/></svg><span id="tt0"></span><i class="dot"></i></button>
+    <button class="tab" data-t="ups"><svg class="ico"><use href="#i-mult"/></svg><span id="tt1"></span><i class="dot"></i></button>
+    <button class="tab" data-t="fr"><svg class="ico"><use href="#i-star"/></svg><span id="tt2"></span><i class="dot"></i></button>
+  </div>
+  <div id="qty"><span id="qtl"></span><button data-q="1">x1</button><button data-q="10">x10</button><button data-q="100">x100</button><button data-q="0" id="qmax"></button></div>
+  <div id="list"></div>
+</div>
+
+<div id="hint"></div>
+<div id="toast"></div>
+<div id="banner"></div>
+<div id="modal" class="hidden"><div class="card" id="card"></div></div>
+<div id="adov" class="hidden"><div class="adbox" id="adtxt"></div></div>
+
+<!--sdk--><script src="/sdk.js"></script>
+<script src="sdk-mock.js"></script><!--/sdk-->
+<script src="platform.js"></script>
+<script src="economy.js"></script>
+<script src="art.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

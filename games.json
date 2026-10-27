@@ -1,0 +1,22 @@
+{
+  "game1-merge": {
+    "storageId": "cgm",
+    "gamepush": {}
+  },
+  "game2-blocks": {
+    "storageId": "blk",
+    "gamepush": {}
+  },
+  "game3-sort": {
+    "storageId": "srt",
+    "gamepush": {}
+  },
+  "game4-shawarma": {
+    "storageId": "swt",
+    "gamepush": {}
+  },
+  "game5-flux": {
+    "storageId": "flx",
+    "gamepush": {}
+  }
+}

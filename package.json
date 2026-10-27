@@ -1,0 +1,14 @@
+{
+  "name": "yandex-games",
+  "version": "1.0.0",
+  "description": "Five HTML5 canvas games with a platform-adapter layer (Yandex Games, VK, GamePush, CrazyGames) and a static web build",
+  "license": "MIT",
+  "author": "bogemadumb",
+  "scripts": {
+    "build": "node build.js",
+    "build:web": "node build.js --platform web",
+    "serve": "node build.js --platform web && python3 -m http.server 8080 -d dist/web",
+    "test": "node game3-sort-tools/verify-levels.js && node game4-shawarma-tools/sim.js"
+  },
+  "engines": { "node": ">=18" }
+}
